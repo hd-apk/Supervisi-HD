@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="config.js"></script>
+<meta name="theme-color" content="#0f766e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Supervisi HD">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Supervisi SOP – Instalasi Hemodialisa</title>
+<style>
+:root{--bg:#f3f6f5;--cd:#fff;--tx:#14302b;--mu:#5d7570;--pr:#0f766e;--bd:#d6e2df;--rd:#c0262d;--gn:#15803d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1816;--cd:#172522;--tx:#e6f0ed;--mu:#9bb3ad;--pr:#2dd4bf;--bd:#2a3d39;--rd:#f87171;--gn:#4ade80}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+.w{max-width:960px;margin:0 auto;padding:12px}
+.card{background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:12px;margin-bottom:10px}
+.g{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}@media(min-width:640px){.g{grid-template-columns:repeat(4,1fr)}}
+.mu{color:var(--mu);font-size:13px}h2{margin:6px 0 10px;font-size:18px}h3{margin:0 0 8px;font-size:15px}
+nav{display:flex;gap:6px;overflow-x:auto;padding:4px 0 10px}nav button{white-space:nowrap}
+button,.b{background:var(--pr);color:#fff;border:0;border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer}
+button.o{background:transparent;color:var(--pr);border:1px solid var(--pr)}button.d{background:var(--rd)}button.on{outline:2px solid var(--tx)}
+input,select,textarea{font:inherit;color:inherit;background:var(--cd);border:1px solid var(--bd);border-radius:8px;padding:7px;max-width:100%}
+textarea{width:100%;min-height:90px}.tw{overflow-x:auto}table{border-collapse:collapse;width:100%}
+.tb th,.tb td{border-bottom:1px solid var(--bd);padding:6px;text-align:left;font-size:14px;vertical-align:middle}
+.bd{display:inline-block;padding:2px 8px;border-radius:99px;font-size:12px;color:#fff}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#14302b;color:#fff;padding:8px 14px;border-radius:8px;display:none;z-index:9}
+.sheet{background:#fff;color:#000;padding:14px;font-size:12.5px;overflow-x:auto;border-radius:6px}
+.sheet table{border:2px solid #000;margin-bottom:8px;min-width:560px}.sheet td,.sheet th{border:1px solid #000;padding:3px 5px}
+.sheet input,.sheet select,.sheet textarea{border:0;border-bottom:1px dotted #555;border-radius:0;background:transparent;color:#000;padding:1px 2px;font-size:12.5px;width:100%}
+.sheet input[type=radio]{width:auto;accent-color:#000;transform:scale(1.25)}.c{text-align:center}.sheet td[style*=center] input{text-align:center}.li{display:grid;grid-template-columns:1.5em 1fr;column-gap:3px}
+.kop{text-align:center;border-bottom:3px double #000;padding-bottom:6px;margin-bottom:8px}.kop b{font-size:15px}
+.pad{margin:0 auto;display:block;width:100%;max-width:300px;height:90px;border:1px dashed #999;background:#fff;touch-action:none}
+.hero{background:linear-gradient(160deg,#0b3d91 0%,#0f766e 100%);color:#fff;text-align:center;padding:30px 16px 56px;margin:-12px -12px 0;border-radius:0 0 30px 30px}
+.hero img{height:92px;background:#fff;border-radius:20px;padding:8px 12px;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.hero h1{margin:14px 0 2px;font-size:26px;letter-spacing:.3px}.hero .s1{font-size:17px;font-weight:600}.hero .s2{opacity:.85;font-size:13px;margin-top:6px}
+.login .card{max-width:380px;margin:-30px auto 0;position:relative;box-shadow:0 12px 32px rgba(15,118,110,.22)}.login select,.login input{width:100%;padding:11px}.login button{width:100%;padding:12px;font-weight:600}
+.top{display:flex;gap:10px;align-items:center;margin-bottom:8px}.top img{height:42px;background:#fff;border-radius:10px;padding:3px}
+.credit{text-align:center;margin:18px auto 6px;max-width:380px;font-size:12.5px;color:var(--mu);line-height:1.5}.credit b{display:block;color:var(--pr);font-size:15px;margin:2px 0}
+@page{size:A4;margin:12mm}
+@media print{body{background:#fff}.noprint{display:none!important}.w{padding:0;max-width:none}.sheet{padding:0;overflow:visible}.pad{border:0}.sheet input,.sheet select,.sheet textarea{border:0}}
+</style></head><body><div class="w" id="app"></div><div id="toast"></div>
+<script>
+/* Jembatan ke Apps Script. Kosongkan API = MODE REVIEW (data disimpan lokal di HP). */
+(function(){
+var API=((window.APP_CONFIG&&window.APP_CONFIG.api)||'').trim();  /* URL diisi di config.js */
+var LS='supervisiHD_review_data',mem='';
+function local(body,ok,fail){
+  setTimeout(function(){
+    try{
+      if(!body){var v='';try{v=localStorage.getItem(LS)||''}catch(e){v=mem}if(ok)ok(v)}
+      else if(body.action==='save'){mem=body.data;try{localStorage.setItem(LS,body.data)}catch(e){}if(ok)ok(true)}
+      else{if(ok)ok(true)}
+    }catch(e){if(fail)fail(e)}
+  },0);
+}
+function call(body,ok,fail){
+  if(!API)return local(body,ok,fail);
+  var get=!body;
+  var opt=get?{}:{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)};
+  fetch(get?API+'?action=load&t='+Date.now():API,opt)
+    .then(function(r){return r.json()})
+    .then(function(j){if(!j.ok)throw new Error(j.error||'Server menolak');if(ok)ok(j.data)})
+    .catch(function(e){if(fail)fail(e)});
+}
+function mk(ok,fail){return{
+  withSuccessHandler:function(f){return mk(f,fail)},
+  withFailureHandler:function(g){return mk(ok,g)},
+  loadData:function(){call(null,ok,fail)},
+  saveData:function(j){call({action:'save',data:j},ok,fail)},
+  notifyKatim:function(sub,b){call({action:'notify',subject:sub,body:b},ok,fail)}
+}}
+window.google={script:{run:mk()}};
+if(!API){var rv=document.createElement('div');rv.textContent='MODE REVIEW · data hanya di HP ini';
+rv.style.cssText='position:fixed;right:8px;top:calc(env(safe-area-inset-top,0px) + 6px);background:#b45309;color:#fff;font-size:11px;padding:3px 9px;border-radius:99px;z-index:20;pointer-events:none;opacity:.92';
+document.body.appendChild(rv)}
+})();
+</script>
+<script>
+const $=s=>document.querySelector(s),K='supervisiHD_v1',esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9),today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const fmt=d=>d?new Date(d+'T00:00').toLocaleDateString('id-ID',{weekday:'long',day:'2-digit',month:'long',year:'numeric'}):'';
+const prs=t=>t.split('\n').map(l=>l.trim()).filter(l=>l.includes('|')).map(l=>{const i=l.indexOf('|');return{g:l.slice(0,i).trim(),t:l.slice(i+1).trim()}});
+const S1=`Persiapan Alat|Timbangan Berat Badan
+Persiapan Alat|Tensimeter dan Stetoskop
+Persiapan Alat|Termometer
+Persiapan Alat|Jam Tangan dengan Detik
+Persiapan Alat|Alat Tulis
+Persiapan Alat|File Pasien
+Persiapan Pasien|Pasien diberitahukan tentang tindakan yang akan dilakukan
+Persiapan Pasien|Pasien dipersilahkan untuk mencuci tangan
+Persiapan Pasien|Pasien dipersilahkan untuk BAB, BAK dan ganti pakaian bila diperlukan
+Persiapan Pasien|Keluarga supaya menunggu diluar ruangan tindakan
+Pelaksanaan|Perawat mencuci tangan sesuai SPO
+Pelaksanaan|Timbang berat badan pasien
+Pelaksanaan|Observasi tanda-tanda vital: tekanan darah, nadi, suhu, pernapasan sesuai SPO
+Pelaksanaan|Observasi adanya tanda-tanda kelebihan cairan dari:
+Pelaksanaan|- Pertambahan berat badan
+Pelaksanaan|- Tinggi rendahnya tekanan darah
+Pelaksanaan|- Adanya sesak napas, oedema
+Pelaksanaan|Menanyakan keluhan pasien setelah hemodialisis yang lalu
+Pelaksanaan|Kolaborasi dengan dokter penanggung jawab hemodialisis
+Pelaksanaan|Memeriksa apakah mesin dialisis sudah siap digunakan
+Pelaksanaan|Menyiapkan pasien untuk tindakan fungsi (Cimino, CDL, dan Femoral sesuai SPO)
+Pelaksanaan|Mencuci tangan
+Dokumentasi|Melakukan pendokumentasian setiap selesai tindakan`;
+const LOGO='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQQAAAC/CAMAAAAvrFI6AAAAkFBMVEX////+/////v7+/v/+/v79/v79/f38/f78/P38/Pz7/P37+/v5+Pjz9fXt7e7l3+LZ3eDT09S1zc+us7pssLI6o5slnJQjnJMcmZAVl42ohJZud4lNVmgfVZQMNogNLnQBNJUBM5UBM5QBMZEBLosBK4QALZAIJ20BKHwAJ4MAJnYAIHYOFzMGBgYCAgIAAAB4C7BDAAAeyUlEQVR42u1dh3riOBBWgpBxr2nYJqQuBEPe/+1uimTLBrO5S3YvIZnvbnFcpNGv6XIR4q+SI7Kri4uLREytPRc2XRbdsRMlGPLN1fV1cu4M9hi6urlwvW8AwuXVVRb4gz0tXV+EgTx1EHICIeyBgGO/QbpGEKJQfQ8QomAAgjYI1wBC/F1BuM5TpIvvBsLZFKgDIUG6+OaSEEdA3wyEEMKDoigS4TEIsMf3g+8Hwg14hNQCwXMAhMvvBgJu+IEGITiHw98UhFCDUGRI3w6EHKMjA4IdLH0j73CegF0s0kiDYIXN3wgE5YdxEsdDEL6VOgQyiGLAAJIISx2QvpNNcLwgBAp8hw1jXuRERf5tQCCHqElHjHFMkTOoyDcBARxi0lKhXSQMnyj6JvWE6x6RU7iGeCkkCk5cEAwIh+g6c32FdOJysF9M64HQ1dxOHYTipvOGLV0TCOE3AeFMUKC4R9cEQnBiMz5GHsRI6ZBichAAwvBsXIGY4ob1exIURAOC6FmD4J+UzHtZ8XZKwiBnEKLhoUycnWFTGYgANelB418FhODi5u2UifNMg3A1OFScT6fY1EUwFfQbnn8dEMKL68uryxHqe8bLm8wXBoSLK+syyCiLwPcKLLRA6s2/vvxKIFy9lW6y0EhCfNm/7KaIAv/ihtJrt7j5Umm2AcGe+HGhuMkipUFI9kCIw4BASEK/4F/3S4FwfUFlw4xiAC4h7hF6hQEIN+bUi+uvDwJwnKaYGecAwk2epJwypolFcX4IBLosSU8FBEiL4wgHeJPHcbRHcXQQhJjOTU4ChJuLOAqDUDEIURQEIUp5EoQp/QTm2B4IcGrgR6cCQuhL70yDEDoiusJxiejyBn88ycuQeyDg/QlnIsImTgIEV6+3AgiBgtFDVFCc8/B8/wAIFxgbRKE8KRCUmO6BECQ0PNhxQBIgzz4lEK6uLy8o/r+4ZnVQWh2ihNQBduyBEGVZnmfxCYFglhIw/tEg0B16YPfxJ94HIQrDGFJKOFVO5YmAYEWMCIIUQZymWRpH/HNAEoIA/SZHxuGJSEJHDIIbxglONM93MDSMeRtKYM05OQ0QLq37VAkERfUUmu8I19/6IPTOBzqF3IHC5pYSWlFRvh/4rnJ8CIY8eTYA4XpvNeJkcgedJUSBM5V753UgXA5TTVqhPoE4AYYehcNVpTPH8QxJA0J+qA4P+y5OIXcIwkHFcHhP+zWB4I+UJC9OImIUvaphce7hvWpDxYf44FAdnkzJaYBw0Sn6dREEnl6G43rTJdcY0V/Eelm+XaE3puQUQLi0nmSAUFmDcN2PIQI3CEP0m5hkp13BAWyJ65+CJFj2HjRcg9CzC3jvjnSJLiCruAD36RpS4uuD4AZJ2lUUUwOCvqe9jSHMytM5edbQKqufnQAIPt6iZml4C0Kv0hj6Z0gQTBEIcNbUkDP9+iCciyC0ioqhz/cnXGexrfjtEqTLd7T2F6e/eMSYYKhkY+BKAwKkintRQQiij5dlSY+4qVNIoPTDfk4HghguV15G5z5l4Ps5xFeuJwxGc1MozwKhuL5sswUMGUAN/JHVu6+rDu3qW3vDbhHqYAlBOC+szFEPNDgMglaH608HgmzpMAiH0qE2WOpAMJqCIKQMwqFUCkG4gBYuD4JwjJe/RTMg1QchoPSnT5QO9UEAI8ihAgRJ15cMwvXloVQKcoiMb+jogaCw7//tjgUI9rXFD1oorHlQQZwcTId6ILQlB7xdpwXBLkO0oQTEEnRDuLU0L2czw0xolvX+xp1fU8Dd8zxHyTAr69tft7e3i7quyyJLCIeWQRVGcbI/lCjYA4GxxO0OhMTc4NsRpBdhZN/yqwiBJCtKYGABjPy6rcsslAqrFcDm33joHFiJsvJ2s9n82iD9Qg4ABt239HsBgokTAtcZgJDQQ3BuBwLtM6WYjgJXYpIFv3o2hMB5oM5//YKf2zKPiK0/TnkJVORZomO8MC9/IQ+/iJlFCfJgRFS5rj8kSIf2QMBwcSp6IIDoqwGRyZP6lzpJygWPHzv/Vechd+vHWV4gl/nkT4EQ5rWZ9zyGv6GjrCZhYCB+lbE4O3o/zdtAOO4G1ZmIy67PzabOiBUR51o2NgDKB4AwAdjpdkqlptJuTw+a5A/QhyHki80LQ4NSWTitMPwhEGZiWtxyb6SNi5zYAKlE7UReEBRrJNN2KPKNyJzJmTcb3mguFe6EFhzJMLy84LgXRSSkJ6JSGwbmAB96/YMgeCKpNxp2xKCMhCdFVKB2EFsIAeQoYqLGRiLPjlt/r3WBCfs4tOkmy5tAo+AIHZz7F+rwtggEuKVi86K5gt/b7AgK7wZhJrJbu7cSeIWw5HajWVrkDjhPGKqZdB/9lB5K60K9Me+h2MNFGZi/erG45Y5eyAuCockSsj3S8yc49waGOhWQHxft1OBGPo6CBQIGSP8aBE/kG7svyMl8kZJs0n6Qi4nv0fSHCY0E/acZymJBI4ms4fbEhHZFYFlu2x5e9DjN34u6oOuhW5FpYXjZ/MqF8kRpTn85jkILQqCSLENk3X8Dgsag7asUkJLlvwwvC9AE36GZLOqFxXp/KBBRoD8Vyo7vOPKIcwbgZYz4+jzBMEBEtekZOfGcemOfOIpCB4LbRYBvBmFGGHT91MpD/A0ndSSwMpe8fSBdfOeo1ra+rF6OE7mFDKfEbycfUABQFj0UshEfYUkC3+2OEeBbQQB70MPgFgYtLDZ8hJ5DuN8MY/XS+jflsK8XSYFatVr9DgJzPRrgmd9OPmimD3NkY3WbCHXcJjhOEIRBgOVEb/omEJRIbnud5NBt0TJR+zPtut40jBUNpEgYAhMBGQlaGToGAwSHTtihkIEc1j0G6/DgA10GhMEtym8BQapw0MXUB9GwOoQw8hgEvYG1Q6ZgE6TA0GKxIHw0IONIrFabWwhRUn10tVlEM5HaHK5AR2ajIFxdDBcdr69+C8IMJN9mB5B3QAnNrhTCttvNKMMre2QvKxhqO2yQBs6FJ47Pi0C4TpAXmJuRde2Q6COyIhUsNAsrUAhP1DaPKxDW2SgI1/sPgv0OBDSKvfZr6NJmAI3Uajhya/wv6OoLyHyyNOHVLd+ZcCY+7pExYKgxDlsdpk0ZBjUdhL5XiQTR7KG0Ao0ZA2F42/tVW1kaA8ERyeqlB0ImpNkFiARhOcooxLY1hgdHIllc95ggYX0K42wsGSgdWcaQr76M4AA955sWEfA29WZwWE0OgTAswGo6KgkTFWhBa1t3HNGOe5MH9WYMAcjyYz1UhcUGyoeAaNC86jOaQk0dj8QlSNF3HEZhZrp+WUQTkffPIh3ZB2FYiW8pOQLCDCW/13guZLR4MYyowxig/U8DUnfPmf7XxJKzCXAgq81BjehEIReTlinq/gmjhf3QNDx8JwLf1zQGgoMRwpM1FQC6FFbnB3Vh88J1Bu/9daaJM9Mp9NOwl6dNaWYAJsMST/gzS7J6Ee4phNSR4gGK3PMRECbgHanBrv1SOLOu7wMYPOmUeuZ8UHllMuMUerUHw2rRbkHYkbW8LDAIiVZ7fnI68oSs5SoPgADKsEK1TtreQMjAUu4z0UKw4pR69qEFJkcKH3L2px6t6D/cAOALgcbriWcB/JfCkDYdKAQaxiOk367jDkPFFENzhV7YtE+pK88JdL9+GtBmUfhUVfjo5QWB5YynMdrUHlov8wckVT7wPPQQ5CLH6eoQCOQZsEECgdsvSBuOMGOVOz+UJp7wis16tOcEY0gjI6iOGXE723ORR2kfBMaWGrSbT57GMSiA1T9VaQXRzp/Woz0Lx681m6tFkRWLFUHj9EG4PiIJ1/x2HXcQJvUaxD9qX7VSt0frp1yIP/j45ASy2cV6TAQnXsfZerMioYFYwjbPZzJKsyOU0/MOquecPJJ706DGu1ONPQwWkMdPxJ8krHOuHw/2vgADnq4PCIitELJ3A88hGrxdB4tJw/7WkC3Fi4NMPK6PV3o/CoX4MAqPm/wM9KGHwhomb9EvLXgHlqaGC1WyV0RYUDN2q3XgHIBGYxCLv/DK45mIDqLwuMYKU2EfWkMuul7XE8cOz10/OE72M+FnM1Gv15D/rW20sYhTHuahjv6MVziMQkeGgadFBAa84404iuqn9SCplr+hQQK95mbsdjNxFi2eOhBaVvDUv/Tqa2eAQstChvHS2kCDf4cwiEcwFuq/uiNQfQAx7MDFkQYK/z7AAGDw1944MiPruM+D1of2byw65+vFuvyvIjoDqV+ssZaYW81qbTiAQfJ3dKFFYfG0x8RTHU7sKXqqUz+rnzQaY3R+fqQbHPtTnflp/WQL3CSsD3S/SMRffQ28J9LFmD5Y7D7Wj0/E3qhCnLf/jCgDXg7NWIJQB9OzQ9qwSP+mHDAK2ePjQ5+LB60PD0P2Hta1HGS05+ckAefiPIp6eyzP4Exq3daT3RZrw14nj5n4658DQFF90GT4e8T6UrovIMS5147VloMonc/TwJaF9gSP8Nyf8hTLN9YEMA9HVe4PykLRomAIOIEo99HGBpCpF8S6Yw8+iNMYf+ZIqYKBw44eGA7AyRf3xvuIWXS+33Pxf2AgzhCF+wEr9dkQm0cwV8kCeA8xAsDRw1DPZyAAcwizYwJhHvFW6p7rEyCamIaAJl38OBzttB6AcA97/59b+SbowAYoPEM+nQxwERKiviXYCw9BSOcpjDTCoefnHQgq5d/zczgBQfCwcbhYicGIsYfnIQbln86ZxlFQHoxuOCOQ3z1a0DwvMpUtzCECQWgQ0nMRMggBjr0HAgsUX2wN+f6Z1lz62C/XkFr/TxhgxTCsn5cP94Ye7h+WkQS/cW+zvayXNIxnMt/nkcLQgNVBi4LZSPGIikgOMr7GXNy2lolpBF3SH9zp8rkO/8+P5SgIoJ+X9x0tnwuhABlr1/3DM/F8jwreOXLImOk3irU9DOK4F4w980X6Yk0w3ikIQr9LCJb/11dQQTwDKNzd3RE/d3c4K0oUPWB63DqWAzi3gyV7tzPE1sbYCblH6pN6jMX//IpCTCM0T0TLZ1yFWd5bu+4MxxqFfjhwbm20yIYdBnYb0CwudPX7+7sJwygKS4urVhTuDhBp729nzRFhPXZ9Iaa9g9D1J8CA0og+CoWQyfL+bgSF3xY9xjG4u18mfUGAjlPxKb6dNYNkqmNs+VBH0zFRYBS845hG9ejFIAhR/dD19bz4JBhw8dVCAVg9aBU6Hfbe2tbdvkUo7J7qRHyab6j1OF/eodCOiQJKcEa3Bx8ifGRwMX5lAcEiNP8pMRDapy1b5rCsMDqWh4dCHDaPsDN/GMcAi8ylObzs+ZpPgkJYPt+1KGQCIr7l2GjunsvwQKw/8exG9q4yrdqNfLJXGEPIVjxrDtE2ynGFoEnM9oQBX8hbjyLHXqe1istn1I1P96pSOe3GsHyGlFGVoyjACfdFIDzLMkhP+MX9sStKvIWaT2AUP+Wb78EwlFoYMG70Rt09SzMKg3fW1iYQwrsjGNShZ0IEEIMyEp/0bd5OO5Ll3X0GfvIYCigMkdYJ+CcqHsZVgcKLicjuue1DyvSJVAKySpTpJbsvcQwFGkzuiYnjTISXHxMDDrE4VdPgfeqPQNDtLKAT7MBsx3nQWT7z40pZ/XwMLast0IQ/dhPKBwqDo8dEnE+C4vn+6PAABj59/KT75zKYMAbPrAmf/y3eaiIUjYsDunx5dIQg3fe/OWGZ65AUIXDE5Gu8w9shCb+naXOQ/Ydjo7w7ZgxQY/CGH0T1gXTny3ziYYI6mxT1+rkAntHq3R+B4QgE92Q7hVM8r/n5jNlXeak/SwM+TZ3Xa5q9qFgelYZRKViiFwUxWNf0JPTX+9AHPV2WljU+QQ1isSSf8XYE8Hya/ASaSIX9TP6XoinfHF4UiYfSAGqNOCzfAAAg8FyjFHhJUfBN2l/3A/Rn9KmaJKMnS/2McCAgDmKhDzwQAplPz3fSmxkc50x8aZqgGAcRvkQDfgEHdBtAD2bMLd3pAzUggM8oeCG9GkPNJuIEaOqQpeRnBkSU5vT6Cx6yRfdLfEgpT+l+hZkzmdBlU3EyNOHZnDgmfZYRPiac0w3+eBsrPZ4VmLRa39ExmYgTJenMZjNnzKPAoZP/QF4nGpKfOGOCoTuOmk7ED/3QD/3QD/3QD/3QD/3QD/3QD/3QD/3QD50aSfkpmJB/h1f93RHX9922Lekr/IfeasDfIGHCbUkv5t27RLdkHntWvr3pum03RLrXQ4z0/sYuhx/XVpqJ9m+fvjym2iZEv3U5OP+35HY/fGfI7xfC3A9eK5O9DWVxNc6y4vcb/+c+lUgrprLMAu5UiWheNU1V5vBHUMKxHA9Isy3mlbkGV01d01KOe2JkRklotYxQTHUHYVxZFIuMdlrvnpYiwl1zs0sJlSMT1Tzq84u9VKkZshJxSbxmyEjGjfNvhE1JQR2nR6fTFflrSw0NFvpp9A64ONzCb4kjlWZbVN0l2zLWKOiW6FRFp/BVEhtrZPpqUSrm+BNZIOjLt7GZiMT00syt1ytIt2l7odPm25ZXl1tNBf8mPBjqOD8qTtD3Foj6372+zkHlkBvesX2tRNjAYQMCbs8BBPjZMQbwn+5AH25IZmJstAlRRmmzFKnpRoOAf9ogAG47bHaOr2QGUYqb1x32sdsiMOY8V2Y7apovpWEbXmF2qNVE/8YaBNzOfgfC6+51BxLTYHNwpYi2uEE7gNuwed22koDbCAKfUDWIwesuN6pL+1M0VXNs9BW6pvZ3u1SkuKPR6pAA83CqBYILzMKY4RQXlYjbQra23bTrPug0fK4exWW7o1aR+URyqwgCD0VLwm73e0mAJvFCOd/taIg5yEQDO/y8AXDHQGjw6rgkwBLSUF/ieOG4j9qw3eFlvs8nBwxC3k77PgglTHoDeOGkYVewCV2hRelOA8MBo0YxrHCEPjUDUiHCeTMXwTtBSN1ACBjirhKi3JEa+MztKAiSbHK+pbNdtlEISYUvsW1IEholpc/XaxCkT6/OcIcgUNug/bovFGKY29AN1IBbOgOkAQUO5YKgZl6l/14QwNXJqgWBJEEEsO+IJKDpD3jO2ZpJPeuKVACnDGxUsmUJYBBcfH2/FHsguBLlr0LLi+pOILAk+L7sGQ44LTVYucwrPlgYKCUGICQuBCi++y9AUL5Qeogk1Ft0mMDbcRAAugxNF/eBpmBLIy9hLCWfSwIbyr467IFAo4PD9C+IC6kDWHz8lEB3LytggyYALQFqGE097ijBMUCbAxC0a03+jU0ISxxBImTUkKOAthM4fBwESWZ0V2p9SLd0Aop2Fe9Qc+lc1JDOMDaZYTfqggIaV4T2iNQdTQQxscW4RFqGA5iRGjGXFZB5BWG0QWBjT8R29K3egVwk2nPUR2wb3eHvQAgaPUoK2viPjCwsNAh60hC/2jAy5caEtSDw6GD0YUPqDh4CpgI20f1VkVYIYgA9DUocYaUouGBe855h3NlhydtA4FN3MGi2JeiY0PXCxb8DIbRA8GksDRn6ROJ2nqBqRUYSRkCQMjBYVbo3ELGyoeBFewJqHgWlUSgAOzZEGEBqXsGtvB8EaFafCl2mc2wbjI77L9QBnT04ttcUJLBCKwAXavl2GYRqXs7noGUDdWAmILZqNyR9YyavSBxeMxNFaohYH+YcKoi0JF5fK9VXh5Kfzy/frA7lHAWtYYfPjimt2FgQCJICYBpwDwRf5ZbdMcqxJb0K0OkRt5iUHjOMOsxqkHaaZemjcIWljjdEFxohbTmsQl6xiRS5h+beaxjT1uFj2uEDC2irQD8r2u8rGYh8R+21cYJ0KRbaNd1oUAe2FDcGqBW7LTUuDQh+AC2rNk6QLn3lBu3bzggwyz8hjDhUJGh+27jRXTgvky5/v9snrwH68U4XiaPhk6XIc4075TNopnc0hVLHBF3ECN3tdtsurtXKBbMEUZLZrkCG1EjE2MrFztbgLb12JG5DDxJ8MhzWaTxlmldyneG7gyWFxmbXhKS9VR76Ec2xZBnclmmcY6BGNpBAwC9D8q7GmG9jv0mAefuVhdmAEPIHn7RNSPmlvb4kJdJfFGO741YQP8Z+kG8p81AcT0FzOZ2WlBwv56/Ea6zjvPeC4JP0AsdRs8O4DdWODTZ7bNxJGZ30Ww3Wu6xknXJBSp10ULvjAFeDwGrfNAnP/ZYpIXNqPuCDDTQk+Xg6zThbKqFHSkQReh41W5vXd4CAfGDYDEEaboUVjxi5QOVUinbsyGmDAwFL36bSqMhNanUAzWEjGM5hQkXbGPfqjHbXT6V3TJCGgcwFCg0EWlrkYr7lHBljqISLMxHm4nMVoBXxKfGuMJjYal5R4N6RShNXSm81oZo3pmBChU7IUM2OKuEZ7hSzmQd20YZc5ivHDYq3dZXlUFHFxA18GsdbEsNNDLgqrj7sKn7FJUoq5svcm6/Z9g1rkERSxPifiiqg8/ySG/TMOb/zRbhZWVUlbknt+XLakQous+VzTXm6X4fM6X0xst1OuMoVzS2K6DUzhnA7D0zgxAwBIglW8cpUdyB7Dbf9aNZyHIAS+oU9/BtaHcdv/oicsW7uoO7aoaj2K3X+R5fm5aCrfgF1+KmrPV7/Y6f4JTvt5vUm+H9X2bVuiSmw67eV9/YLeAeeVsSD9onS6saQJO/eNtJxwDV0ChCwVG/12W+4+1OzJrtLZdfEYHw/9EP/eiWClpxktyYk7SUivdCjrFUiqVel2lUqc65sl5FMy8pcJLufdv1Gn6qs5RxmwKqqmGOqv1+0LWr6oBUha+VKKcsGaTslj6wdtR7D/ZfG8C3MvGn/u4leOo4Po0BeYzYpWMEv6aFPdEWSpSYqyDIVZlkoVKrjxiCjhawQzsXUIMKDmhJ6vAnC6TQNJbXOz3ykKe/GUyXsTrsgnBhIo9adc8e4Ye0HF5VmkdT8EqXvdFAcCTVVpCg8wc2YFlG4yFFlAoL410zqhaZG4V+YJ8wpR4hfXyG+oDWspqTgPu2WJbA8QlFPCeF4bgpZrzuK1UpMgRRWp/UimysyHQmV9GpHKr2kVrjWcDWeIqeKAvx2Le1dH5cFEHa8mFFBUrbbUo0OMiSRUHUAwrjtHKsGFRXGE8x1clwrwJhbV/0gXk0h/C8rDNrynQnyMJWgHJnqDCEmhTsqt1Q7yrfoz4BSGR09Uo2Gl4W47sjHuMqsmQykXvSjtRc8mXgu3wsClkdxiS+H6BMX1XJdO21yRaUWCMRLKoz7/Gsk4bWJgXlIRmNsAyQd09z81QKBakwgR5AXcWZG6yZ4JRdpqb62a2j9jkGgIBgL6xHB9YrHcNmipFR+rsutCWQoJp8vTZL/XhDcQLrNrkQQIgg6eBNzJ0mLMRVLgC987BplNtOlRt+AAFcgT/4BEPBg+cqTjplfDqPeUryPkEC6AaqUkxUmEPIgRHHCZV9oOqNjBIIfuCB+c1zkguYA2UBi0lbSks/HgOBrEALB6o6ijHFXgNOCo6wkZYmpBgGEucTSgdKSgKvVrPB9EGgoaUq1mYgwLF/n1etcUg9YgMU0mkurnSQAS5QewTFUIV/Pd4KSgIoEUPHiB8EjxUeAQBUjVockAgVoIgX8Sl8vFe1yXC9KMfWvgCENwmtKlo5AoEW0Khf7INBQfIW4kugruDCew4GIhEtCPyrlGgSDQGpege3HRfm5ytDGsB7GWYXTT9IWy6pdr/gYELTNoUIg1gCaFMeoQcAx5/Q38x20IND6URoiCLpoXx1QB7/hdanGJ4TilFaUtlFORbVUl+9Iwd02/66w6JO1x6jQg3UETLMVTxsdVR8HAnulgAqBAEeDC1GNXltwFXk0Ek3S4k4Sclw6aUAI0D5CItwgWkMQcEcWxxkVgmL4t9yVEqYxRzn3UdrjJALbH7Y2IY7RGCekL3wsQOdNnNH7ZkD24KSEfPQHqkOapSEvfDdkCF2Sv0BBvkYyHDL/aP5c15IE9KMVSQJ9/BrNigFBKp8kFh2iLpZgsXIHQyFIwRPPhYqattBCCq5tQtCQnnXHyCbE5Kj9rj7TuOywPswmgPK7PNXkIfFum5JOyKi4jLVEGC4FOR0IAa/gxSKKuKXSkgQhMBCAoegVQtBjFLVd4+sSGIGxpYMUQTAI9EoKXO2wj+FQFXsXF0wFtwi+g/3uR4CwA++g6G6R+Q7Xk8tXvdBc5UlaYpEXFw54aQlX2TMMlsA75IIkBoKloGnmUQRePNXBEgTACd7QkWuHg5OLqzhYycZASTa7XSPZQ1DV6JUVHIKlPE5wGShlt2uOgVJQ1RtCk4xcFFVoKWrcfZQk+O0yUUiLpICFW3I9E/ul5RlSeZ+LlFoSUHrApMSm/lkKHTbzYgtEUBhrysB3cdERLDt4CTysI2kyAbQ8Q87Tb8NmjFKz9hiKIlwNvaFY+bCJ9ZVAzUm4PkYSyqY0S5J5U4V0Y1yT88+2qeaBuWWKI3eQ5QbdR9VQaV2GFahQOK+27CIzzDwUNrWFDIDP5Xv8cAsb8Wl9yvqL1maaSvHuBu/Pw4XoptJcwRb9j+IInDFzdAtgk1MbbwDhH4qrYAPNy7eAAAAAAElFTkSuQmCC';
+const DUR={2:'5 Menit',3:'5 Menit',11:'30 Menit',12:'30 Menit'};
+const TPL=`Persiapan Alat|Alat 1
+Persiapan Pasien|Memberitahu pasien tentang prosedur yang akan dilakukan
+Pelaksanaan|Mencuci tangan sesuai SOP
+Pelaksanaan|Langkah pelaksanaan 1
+Pelaksanaan|Mencuci tangan
+Dokumentasi|Mendokumentasikan tindakan yang telah dilakukan`;
+const DEF={
+2:`Persiapan Alat|Mesin Hemodialisa
+Persiapan Alat|Blood line set
+Persiapan Alat|Termometer
+Persiapan Alat|Dialyzer/ Artificial Kidney
+Persiapan Alat|Infus Set
+Persiapan Alat|NaCl 0,9% 500 ml 2 Pcs
+Persiapan Alat|Cairan Dialisat
+Persiapan Alat|Matkan / Gelas Ukur
+Persiapan Alat|Tempat sampah yang diperlukan
+Pelaksanaan|Mencuci tangan sesuai SPO
+Pelaksanaan|Memastikan kran RO dan listrik yang mengalir ke mesin dalam keadaan menyala
+Pelaksanaan|Menyalakan mesin hemodialisa
+Pelaksanaan|Pastikan mesin sudah melakukan self test sebagian sebelum memasuki tahap berikutnya (kondisional sesuai tipe mesin)
+Pelaksanaan|Pasang blood line dan dializer pada mesin HD sesuai dengan tipe
+Pelaksanaan|Hubungkan line pressure monitor arteri dan vena pada port di mesin sesuai dengan tempatnya
+Pelaksanaan|Pasang set infus dengan NaCl 0,9% dan hubungkan dengan arteri line dan isi 3/4 bagian chamber, buka roler klem, bilas sebagian arteri line kemudian arteri klem ditutup
+Pelaksanaan|Pada tampilan menu dialysis tekan tombol PRIME kemudian isi jumlah volume rinsing (disesuaikan dengan dialyzer yang akan dipakai: baru ± 500 cc atau reuse ± 1500 cc)
+Pelaksanaan|Jalankan QB dengan kecepatan ± 200-250 cc/mnt untuk mengisi arteri line dengan NaCl 0,9% kemudian isi bagian chamber arteri sampai 3/4 bagian
+Pelaksanaan|Setelah arteri line terisi dengan NaCl 0,9% isi dialyzer, vena line dan bubble trap vena. Usahakan agar seluruh line dan dialyzer terbebas dari udara dengan cara menepuk-nepuk atau memutar-mutar dialyzer
+Pelaksanaan|Setelah arteri line terisi dengan NaCl 0,9% isi dialyzer, vena line dan bubble trap vena. Usahakan agar seluruh line dan dialyzer terbebas dari udara dengan cara menepuk-nepuk atau memutar-mutar dialyzer
+Pelaksanaan|Jalankan QB dengan kecepatan ± 200-250 cc/mnt untuk mengisi arteri line dengan NaCl 0,9% kemudian isi bagian chamber arteri sampai 3/4 bagian
+Pelaksanaan|Setelah arteri line terisi dengan NaCl 0,9% isi dialyzer, vena line dan bubble trap vena. Usahakan agar seluruh line dan dialyzer terbebas dari udara dengan cara menepuk-nepuk atau memutar-mutar dialyzer
+Pelaksanaan|Jika volume rinsing sudah tercapai hentikan QB (bila tidak otomatis berhenti) kemudian hubungkan arteri line dengan vena line, buka kedua klem pada arteri dan vena line serta tetap buka roler klem infus
+Pelaksanaan|Hidupkan kembali QB pertahankan kecepatan QB ± 200-250 cc/mnt
+Pelaksanaan|Pada dialyzer baru setelah tahapan ini bisa langsung masuk pada tahapan therapy, pada dialyzer reuse lakukan rinsing dalam dengan UF ± 200-300 ml selama ± 5 mnt untuk mengeluarkan sisa-sisa zat kimia di pori-pori dialyzer
+Pelaksanaan|Beri heparin pada sirkulasi tertutup jika diperlukan
+Pelaksanaan|Merapikan alat-alat, buang sampah BHP pada tempatnya (tidak tercecer sedikitpun)
+Pelaksanaan|Menyiapkan pasien untuk tindakan fungsi (Cimino, CDL, dan Femoral sesuai SPO)
+Dokumentasi|Melakukan pendokumentasian setiap selesai tindakan`,
+3:`Persiapan|Lepas semua perhiasan (cincin, jam tangan, gelang)
+Persiapan|Pastikan kuku pendek
+Pelaksanaan|Ratakan sabun/cairan handrub pada kedua telapak tangan
+Pelaksanaan|Gosok punggung dan sela-sela jari tangan kiri dengan tangan kanan dan sebaliknya
+Pelaksanaan|Gosok kedua telapak tangan dan sela-sela jari
+Pelaksanaan|Jari-jari sisi dalam dari kedua tangan saling mengunci
+Pelaksanaan|Gosok ibu jari kiri berputar dalam genggaman tangan kanan dan sebaliknya
+Pelaksanaan|Gosokkan dengan memutar ujung jari-jari tangan kanan di telapak tangan kiri dan sebaliknya
+Pelaksanaan|Durasi handwash: 40 - 60 detik (menggunakan air dan sabun)`,
+4:`Persiapan Alat|Set punksi hemodialisa
+Persiapan Alat|Masker
+Persiapan Alat|Sarung tangan steril 1 pasang
+Persiapan Alat|NaCl 0,9% dalam tempatnya
+Persiapan Alat|Desinfektan (Braunoderm atau semisalnya)
+Persiapan Alat|Heparin inj (sesuai keperluan)
+Persiapan Alat|Spuit 1 cc / 5 cc / 10 cc / 20 cc
+Persiapan Alat|Torniquet (bila diperlukan)
+Persiapan Alat|2 buah jarum AV Fistula
+Persiapan Alat|Nierbeken/ plastik sampah
+Persiapan Alat|Lekofix / micropore & gunting (jika diperlukan)
+Persiapan Pasien|Memberitahu pasien tentang prosedur yang akan dilakukan
+Persiapan Pasien|Mempersilahkan keluarga pasien untuk menunggu di luar
+Pelaksanaan|Mencuci tangan, memakai masker dan sarung tangan sesuai SOP
+Pelaksanaan|Mengkaji dan menentukan lokasi akses vaskuler baik inlet maupun outlet
+Pelaksanaan|Memakai APD sesuai SOP
+Pelaksanaan|Lakukan desinfeksi lokasi yang akan dipunksi dengan desinfektan spray tunggu sampai kering (bila menggunakan chlorhexidine swab dengan cara memutar dari dalam keluar)
+Pelaksanaan|Isi AV fistula dengan NaCl 0,9% (bebaskan udara dari fistula)
+Pelaksanaan|Penggunaan heparin inisiasi bila diperlukan
+Pelaksanaan|Lakukan punksi pada daerah yang telah ditentukan
+Pelaksanaan|Cek apakah aliran lancar atau ada tahanan
+Pelaksanaan|Jika perlu pengambilan darah, ambil darah pada bagian inlet atau outlet (proximal), dengan catatan AVF tidak diisi NaCl
+Pelaksanaan|Fiksasi sayap AV Fistula dengan plester/ sejenisnya
+Pelaksanaan|Tutup pangkal jarum dengan kassa kemudian diplester
+Pelaksanaan|Siap disambung dengan arteri dan vena line
+Pelaksanaan|Lanjutkan ke protap Memulai hemodialisa pada pasien dengan cimino
+Pelaksanaan|Alat-alat dirapikan dan dikembalikan pada tempatnya
+Pelaksanaan|Mencuci tangan
+Dokumentasi|Mendokumentasikan tindakan yang telah dilakukan`,
+5:`Persiapan Alat|Mesin hemodialisis yang sudah siap untuk dipergunakan
+Persiapan Alat|Matkan / gelas ukur
+Persiapan Alat|Kasa steril
+Persiapan Alat|Betadine solution
+Persiapan Alat|Masker
+Persiapan Alat|1 set sarung tangan
+Persiapan Alat|Plester dan gunting
+Persiapan Alat|Tempat sampah
+Persiapan Pasien|Memberitahukan pasien tentang prosedur yang akan dilakukan
+Persiapan Pasien|Mempersilahkan keluarga pasien untuk menunggu di luar
+Pelaksanaan|Mencuci tangan sesuai SOP
+Pelaksanaan|Mengatur pasien dalam posisi yang aman dan nyaman
+Pelaksanaan|Memakai sarung tangan
+Pelaksanaan|Turunkan QB 100 ml/mnt kemudian matikan QB dengan menekan tombol ON/OFF untuk mesin Nipro atau Fresenius
+Pelaksanaan|Tutup roler klem set infus, klem IV line, klem arterial line dan vena line
+Pelaksanaan|Lepaskan sambungan arterial line dengan vena line
+Pelaksanaan|Jaga ujung arterial line tetap steril, kemudian hubungkan dengan
+Pelaksanaan|Letakkan ujung vena line pada gelas ukur, perhatikan ujung vena line tetap tersambung konektor jangan sampai terkontaminasi
+Pelaksanaan|Nyalakan blood pump dengan menekan tombol Start, jalankan QB dengan kecepatan 100 ml/mnt secara perlahan, hingga ujung vena line tampak kemerahan, matikan blood pump dengan menekan tombol ON/OFF dan klem vena line
+Pelaksanaan|Desinfeksi ujung vena line tersebut dengan kasa alkohol kemudian hubungkan dengan AVF outlet, buka klem vena line kemudian jalankan blood pump dengan menekan tombol Start, naikkan kecepatan QB secara perlahan-lahan hingga batas yang ditentukan
+Pelaksanaan|Plester pada sambungan arteri dan vena, observasi kembali pada daerah AVF outlet
+Pelaksanaan|Jalankan semua monitoring mesin
+Pelaksanaan|Program mesin sesuai dengan kebutuhan
+Pelaksanaan|Merapihkan alat-alat dan mengembalikan pada tempatnya
+Pelaksanaan|Observasi tekanan darah, nadi, keluhan pasien, mengatur pasien dalam posisi yang aman dan nyaman
+Dokumentasi|Mendokumentasikan tindakan yang telah dilakukan`,
+6:`Persiapan Alat|Tensimeter + stetoskop
+Persiapan Alat|Alat-alat tulis
+Persiapan Alat|Jam yang ada detiknya
+Persiapan Alat|Alat-alat hemodialisa
+Melakukan Persiapan Pasien|Memberitahukan prosedur yang akan dilakukan
+Melakukan Pelaksanaan|Mencuci tangan sesuai SOP
+Melakukan Pelaksanaan|Memonitor / mengobservasi tanda-tanda vital sesuai SOP
+Melakukan Pelaksanaan|Memonitor fungsi vaskuler akses, komplikasi / keluhan-keluhan pasien
+Melakukan Pelaksanaan|Memonitor mesin dialysis terhadap: QB, QD, temperatur, conductivity, UFR/UFG, tekanan arteri / vena, heparinisasi, detektor udara, kebocoran, sistem alarm / limit, dll
+Melakukan Pelaksanaan|Memonitor sirkulasi darah terhadap cimino, graft, CDL (mahukar cath) arteri / vena lines, kompartemen darah
+Melakukan Pelaksanaan|Memonitor sirkulasi dialisat terhadap cairan dialisat, selang konsentrat, selang dialisat (inlet dan outlet), kompartemen dialisat
+Melakukan Pelaksanaan|Melakukan tindakan segera bila ditemukan kondisi seperti komplikasi teknik dan atau komplikasi intra dialysis sesuai SOP
+Melakukan Pelaksanaan|Kolaborasi dengan dokter bila diperlukan
+Melakukan Pelaksanaan|Mengembalikan alat pada tempatnya
+Melakukan Pelaksanaan|Mencuci tangan sesuai SOP
+Melakukan Pendokumentasian Tindakan|Mendokumentasikan tindakan yang telah dilakukan`,
+7:`Persiapan Alat|Sarung tangan
+Persiapan Alat|Masker
+Persiapan Alat|Dializer
+Persiapan Alat|Kasa tebal atau deepers
+Persiapan Alat|Wadah atau ember yang dialasi plastik kuning
+Persiapan Alat|2 handyplast/band aid
+Persiapan Pasien|Menginformasikan pada pasien tindakan yang akan dilakukan
+Persiapan Pasien|Meminta keluarga pasien untuk menunggu di luar selama dilakukan tindakan mengakhiri
+Pelaksanaan|Mencuci tangan, memakai masker dan sarung tangan sesuai SOP
+Pelaksanaan|Memberikan obat-obatan bila ada (melalui vena line, port injeksi) sebelum mengakhiri dialysis
+Pelaksanaan|Memulai tindakan mengakhiri disaat TD terpenuhi
+Pelaksanaan|Menurunkan QB hingga 100 cc/mnt, pada mesin NIPRO tampilan menu tekan tombol RETRAN sementara untuk mesin FRESENIUS akan tampil otomatis Reinfusion pada display
+Pelaksanaan|Melakukan tindakan pengembalian darah diutamakan dengan teknik sirkulasi tertutup
+Pelaksanaan|Mendorong darah dengan NaCl 0,9% secara manual ke arah akses inlet (dengan memastikan tidak ada thrombus atau embolus masuk ke tubuh pasien) kemudian klem inlet AV fistula
+Pelaksanaan|Menjalankan QB dengan kecepatan 100-150 cc/mnt untuk mendorong darah ke tubuh pasien (pastikan tidak ada thrombus atau embolus masuk ke tubuh pasien)
+Pelaksanaan|Menghentikan QB bila pada ujung vena line / selang biru sudah berwarna jernih atau kurang lebih 300 cc NaCl 0,9% yang masuk pada pembilasan, maka matikan QB dengan menekan tombol Stop kemudian klem AV fistula
+Pelaksanaan|Mengukur tekanan darah pasien, pastikan tensi pasien stabil sebelum melepaskan AV fistula
+Pelaksanaan|Melepaskan sambungan fistula inlet / arteri ataupun outlet / vena dari blood line
+Pelaksanaan|Memastikan blood line dan dialyzer tertutup untuk menghindari cipratan darah keluar kemudian masukkan ke dalam wadah / tempat yang telah disediakan
+Pelaksanaan|Memisahkan plabot NaCl 0,9% ke tempat sampah B3 yang sudah disediakan
+Pelaksanaan|Melakukan desinfeksi mesin sesuai prosedur dan jadwal yang ditetapkan
+Pelaksanaan|Melepaskan fistula inlet / arteri ataupun outlet / vena dari blood line segera tekan dengan deapers / kassa tebal steril menggunakan tiga jari tepat pada bekas punksi kurang lebih selama 10 menit
+Pelaksanaan|Mengobservasi perdarahan dari akses vaskuler pastikan perdarahan berhenti
+Pelaksanaan|Menutup luka akses vascular dengan handyplast
+Pelaksanaan|Desinfeksi luar mesin sesuai SOP
+Pelaksanaan|Mematikan mesin setelah desinfektan dan tutup kran bila tidak digunakan
+Dokumentasi|Mendokumentasikan tindakan yang telah dilakukan`,
+8:`Persiapan Alat|Mesin hemodialisa yang sudah siap
+Persiapan Alat|CDL Pack
+Persiapan Alat|Matkan
+Persiapan Alat|Kasa tebal atau deepers
+Persiapan Alat|Masker
+Persiapan Alat|Heparin injeksi
+Persiapan Alat|Tempat sampah
+Persiapan Pasien|Menginformasikan pada pasien tindakan yang akan dilakukan
+Persiapan Pasien|Meminta keluarga pasien untuk menunggu di luar selama dilakukan tindakan
+Pelaksanaan|Mencuci tangan, memakai masker dan sarung tangan sesuai SOP
+Pelaksanaan|Mengatur pasien dalam posisi yang aman dan nyaman
+Pelaksanaan|Buka CDL Pack
+Pelaksanaan|Buka hipafix dan kassa balutan yang ada pada CDL serta alasi selang CDL dengan alas steril
+Pelaksanaan|Desinfeksi daerah masuknya mahukar, pangkal mahukar dan selang CDL dengan kassa (perawatan exit site CDL)
+Pelaksanaan|Tutup area exit site CDL dengan kasa steril dan balut dengan hipafix sesuai keperluan
+Pelaksanaan|Aspirasi kedua selang CDL (inlet dan outlet) dengan spuit 10 cc, keluarkan darah kemudian buang kurang lebih 2 cc. Spoel setiap selang dengan 5 cc NaCl dan tambah dosis heparin awal (1000 iu)
+Pelaksanaan|Desinfeksi ujung arteri line baik pada CDL maupun pada blood line dengan kasa alkohol, kemudian hubungkan satu dengan yang lainnya, letakkan ujung vena line blood line pada gelas ukur (matkan), perhatikan ujung vena line jangan sampai terkontaminasi
+Pelaksanaan|Nyalakan blood pump / jalankan QB dengan kecepatan 100-150 ml/mnt secara perlahan hingga ujung vena line tampak kemerahan, matikan blood pump dan klem vena line
+Pelaksanaan|Desinfeksi ujung vena line tersebut dengan kasa alkohol, kemudian hubungkan dengan vena line pada CDL, buka klem pada kedua line tersebut, lalu jalankan blood pump dengan menaikkan QB secara perlahan hingga batas kecepatan yang ditentukan
+Pelaksanaan|Observasi keadaan umum pasien sesaat setelah hemodialisa dimulai
+Pelaksanaan|Jalankan semua monitoring mesin
+Pelaksanaan|Program mesin sesuai dengan kebutuhan / preskripsi HD
+Pelaksanaan|Rapikan alat-alat dan kembalikan pada tempatnya
+Pelaksanaan|Observasi tanda-tanda vital, dan keluhan pasien serta mengatur pasien dalam posisi yang aman dan nyaman
+Pelaksanaan|Mencuci tangan
+Dokumentasi|Mendokumentasikan tindakan yang telah dilakukan`,
+9:`Persiapan Alat|Sarung tangan
+Persiapan Alat|Masker
+Persiapan Alat|Dializer
+Persiapan Alat|CDL Pack terminasi
+Persiapan Alat|Wadah atau ember yang dialasi plastik kuning
+Persiapan Pasien|Menginformasikan pada pasien tindakan yang akan dilakukan
+Persiapan Pasien|Meminta keluarga pasien untuk menunggu di luar selama dilakukan tindakan mengakhiri
+Pelaksanaan|Mencuci tangan, memakai masker dan sarung tangan sesuai SOP
+Pelaksanaan|Memberikan obat-obatan bila ada (melalui vena line, port injeksi) sebelum mengakhiri dialysis
+Pelaksanaan|Memulai tindakan mengakhiri disaat TD terpenuhi
+Pelaksanaan|Menurunkan QB hingga 100 cc/mnt, pada mesin NIPRO tampilan menu tekan tombol RETRAN sementara untuk mesin FRESENIUS akan tampil otomatis Reinfusion pada display
+Pelaksanaan|Melakukan tindakan pengembalian darah diutamakan dengan teknik sirkulasi tertutup
+Pelaksanaan|Mendorong darah dengan NaCl 0,9% secara manual ke arah akses inlet (dengan memastikan tidak ada thrombus atau embolus masuk ke tubuh pasien) kemudian klem inlet CDL dan inlet arteri line
+Pelaksanaan|Menjalankan QB dengan kecepatan 100-150 cc/mnt untuk mendorong darah ke tubuh pasien (pastikan tidak ada thrombus atau embolus masuk ke tubuh pasien)
+Pelaksanaan|Menghentikan QB bila pada ujung vena line / selang biru sudah berwarna jernih atau kurang lebih 300 cc NaCl 0,9% yang masuk pada pembilasan, maka matikan QB dengan menekan tombol Stop kemudian klem outlet CDL dan vena line
+Pelaksanaan|Mengukur tekanan darah pasien, pastikan tekanan darah dalam keadaan stabil
+Pelaksanaan|Melepaskan sambungan CDL inlet/outlet dari blood line
+Pelaksanaan|Memastikan blood line dan dialyzer tertutup untuk menghindari cipratan darah keluar kemudian masukkan ke dalam wadah / tempat yang telah disediakan
+Pelaksanaan|Memisahkan plabot NaCl 0,9% ke tempat sampah B3 yang sudah disediakan
+Pelaksanaan|Melakukan desinfeksi mesin sesuai prosedur dan jadwal yang ditetapkan
+Pelaksanaan|Menyiapkan heparin dalam spuit 5 cc
+Pelaksanaan|Spoel kedua selang CDL (inlet/outlet) dengan heparin yang tersedia, kemudian klem kembali dan tutup ujung selang dengan tutup yang tersedia
+Pelaksanaan|Membungkus selang kateter CDL dengan kassa dan fiksasi dengan hipafix
+Pelaksanaan|Desinfeksi luar mesin sesuai SOP
+Pelaksanaan|Merapikan dan mengembalikan alat-alat pada tempatnya
+Pelaksanaan|Mengobservasi tanda-tanda vital dan keluhan pasien serta timbang berat badan
+Pelaksanaan|Mematikan mesin setelah desinfektan dan tutup kran bila tidak digunakan
+Dokumentasi|Mendokumentasikan tindakan yang telah dilakukan`,
+10:`Persiapan Alat|Meja atau baki
+Persiapan Alat|Obat-obat yang siap diberikan
+Persiapan Alat|Bak spuit bersih
+Persiapan Alat|Kapas swabs
+Persiapan Alat|Alas kerja
+Persiapan Alat|Bengkok
+Persiapan Pasien|Menginformasikan pada pasien tindakan yang akan dilakukan
+Pelaksanaan|Mencuci tangan sesuai SOP (hand wash)
+Pelaksanaan|Melakukan identifikasi dengan melihat gelang identitas pasien dan menanyakan nama dan tanggal lahir dengan pertanyaan terbuka
+Pelaksanaan|Membaca etiket obat untuk mencegah kekeliruan (nama obat, dosis dan rute pemberian)
+Pelaksanaan|Mendekatkan alat, memasang alas kerja dilanjutkan dengan cuci tangan (hand rub)
+Pelaksanaan|Melakukan desinfeksi area yang akan ditusuk, lalu angkat sedikit dengan tangan kiri (seperti dicubit) area tempat penyuntikan (boleh abdomen, paha atas, paha sisi lateral, lengan atas), buang sampah ke bengkok
+Pelaksanaan|Membaca basmalah sebelum disuntikkan
+Pelaksanaan|Menusukkan jarum dengan lubang jarum menghadap ke atas dan membentuk sudut 45 derajat - 90 derajat dengan permukaan kulit
+Pelaksanaan|Melakukan penarikan plunger spuit untuk memastikan tidak mengenai pembuluh darah, jika tidak ada darah, masukkan obat dengan perlahan-lahan, setelah masuk semua (untuk jenis epo tunggu 10 detik)
+Pelaksanaan|Menarik jarum dengan cepat dan bekas tusukan jarum ditekan dengan kapas alkohol
+Pelaksanaan|Membuang sampah tajam ke safety box dan sampah plastik ke tempat sampah non infeksius
+Pelaksanaan|Membereskan alat
+Pelaksanaan|Mencuci tangan sesuai SPO
+Pendokumentasian Tindakan|Mendokumentasikan tindakan yang telah dilakukan`,
+11:`Persiapan Alat|Tensimeter + stetoskop + termometer
+Persiapan Alat|Jam yang ada detiknya
+Persiapan Alat|Timbangan berat badan
+Persiapan Alat|Alat tulis
+Melakukan Persiapan Pasien|Memberitahu pasien tentang prosedur yang akan dilakukan
+Pelaksanaan|Mencuci tangan sesuai SOP
+Pelaksanaan|Memonitor/mengukur/mengobservasi tanda-tanda vital sesuai SOP
+Pelaksanaan|Memonitor fungsi vaskular akses, komplikasi, adanya perdarahan dan keluhan pasien
+Pelaksanaan|Memonitor status cairan pasien (ronchi, edema, turgor kulit)
+Pelaksanaan|Melakukan tindak segera bila ditemukan kondisi kegawatdaruratan
+Pelaksanaan|Kolaborasi dengan dokter bila diperlukan
+Pelaksanaan|Pastikan pasien pulang dalam kondisi hemodinamik stabil setelah dilakukan observasi kurang lebih 30 menit pos dialisis
+Pelaksanaan|Mengembalikan alat-alat pada tempatnya
+Pelaksanaan|Mencuci tangan sesuai SOP
+Melakukan Pendokumentasian Tindakan|Mendokumentasikan tindakan yang telah dilakukan`,
+12:`Persiapan Alat|Persiapan alat
+Persiapan Alat|- Flipchart/LCD
+Persiapan Alat|- Alat peraga
+Persiapan Alat|Metode yang digunakan
+Persiapan Alat|- Ceramah
+Persiapan Alat|- Demonstrasi
+Persiapan Alat|- Tanya jawab
+Melakukan Persiapan Pasien|Memberitahu pasien tentang prosedur yang akan dilakukan
+Melakukan Persiapan Pasien|Melakukan kontrak waktu
+Pelaksanaan|Ucapkan salam, perkenalkan diri kepada pasien
+Pelaksanaan|Melakukan identifikasi pasien sesuai prosedur
+Pelaksanaan|Menjelaskan prosedur yang akan dilakukan termasuk: tujuan, manfaat tindakan dan kesediaan pasien
+Pelaksanaan|Memberikan penjelasan pada pasien dan atau pada keluarga mengenai CAPD, akses peritoneal dan program pelatihan
+Pelaksanaan|Merapikan alat-alat dan mendokumentasikan kegiatan
+Melakukan Pendokumentasian Tindakan|Mendokumentasikan tindakan yang telah dilakukan`};
+function seed(){const N=['Persiapan Pre HD','Persiapan Mesin (Priming, Soaking, dll)','Cuci Tangan (Hand Hygiene)','Tindakan Akses Vaskular Cimino','Memulai Dialisis dengan Cimino','Monitoring Pasien selama Dialisis','Terminasi HD dengan Cimino','Memulai Dialisis dengan CDL','Terminasi HD dengan CDL','Pemberian Terapi ESA secara SC','Monitoring Pasien Pos HD','Edukasi Pasien CAPD'];
+const u=[{id:'adm',nama:'Admin',role:'admin',pin:'1234'}];for(let i=1;i<=4;i++)u.push({id:'k'+i,nama:'KA Tim '+i,role:'katim',pin:'1234'});for(let i=1;i<=12;i++)u.push({id:'p'+i,nama:'Perawat '+i,role:'perawat',pin:'1234'});
+return{users:u,sops:N.map((n,i)=>({id:'s'+(i+1),nama:n,items:prs(i?DEF[i+1]||'':S1),dur:DUR[i+1]||'15 Menit'})),req:[],sup:[],set:{rs:'RSUD WELAS ASIH',inst:'Instalasi Hemodialisa',judul:'PELAKSANAAN KEPERAWATAN HEMODIALISIS DI RUMAH SAKIT RSUD WELAS ASIH',kr:'',krn:'',ki:'',kin:'',target:80}}}
+let db=null,_t=0,_b=0,_d=0;
+function push(){if(_b){_d=1;return}_b=1;_d=0;google.script.run.withSuccessHandler(()=>{_b=0;if(_d)push()}).withFailureHandler(()=>{_b=0;toast('Gagal menyimpan ke Google Drive')}).saveData(JSON.stringify(db))}
+const save=()=>{clearTimeout(_t);_t=setTimeout(()=>{_t=0;push()},600)};
+function pull(){if(_t||_b||S.v=='sheet')return;google.script.run.withSuccessHandler(s=>{if(_t||_b||S.v=='sheet'||!s||s==JSON.stringify(db))return;try{const d=JSON.parse(s);if(d&&d.users){db=d;render()}}catch(e){}}).loadData()}
+function boot(s){try{db=JSON.parse(s)}catch(e){}if(!db||!db.users)db=seed();if(!db.v||db.v<2){db.sops.forEach(s=>{const n=+s.id.slice(1);if(DEF[n]&&!s.items.length)s.items=prs(DEF[n]);if(!s.dur)s.dur=DUR[n]||'15 Menit';if(s.nama=='Cuci Tangan')s.nama='Cuci Tangan (Hand Hygiene)';if(s.nama=='Pemberian Terapi ESA/EPO')s.nama='Pemberian Terapi ESA secara SC'});const t=db.set;t.ki=t.ki||'dr. Fikar Putra Pradana';t.kin=t.kin||'198911232025211030';t.kr=t.kr||'Suwarno, S.Kep.,Ners';t.krn=t.krn||'198205102023211001';db.v=2;}
+{const t=db.set;t.k1=t.k1||'PEMERINTAH PROVINSI JAWA BARAT';t.k2=t.k2||'UOBK RUMAH SAKIT UMUM DAERAH WELAS ASIH';t.k3=t.k3||'CEKLIS OBSERVASI-DEMONSTRASI/PRAKTEK INSTALASI HEMODIALISA'}
+if(JSON.stringify(db)!=s)save();render()}
+const toast=t=>{const e=$('#toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2200)};
+let S={u:null,v:'dash',cur:null,ro:false,fm:today().slice(0,7),fs:'',fp:''};
+const me=()=>db.users.find(x=>x.id==S.u),U=id=>(db.users.find(x=>x.id==id)||{nama:'-'}),SP=id=>db.sops.find(x=>x.id==id)||{nama:'-',items:[]};
+const nil=s=>{const a=s.items.filter((_,i)=>s.ans[i]=='y'||s.ans[i]=='t').length,y=s.items.filter((_,i)=>s.ans[i]=='y').length;return a?Math.round(y/a*1000)/10:0},col=n=>n>=db.set.target?'var(--gn)':'var(--rd)';
+const bdg=(t,c)=>`<span class=bd style="background:${c}">${t}</span>`,stc={Menunggu:'#b45309',Terjadwal:'#2563eb',Selesai:'#15803d'};
+const opt=(a,v)=>a.map(x=>`<option value="${x.id}" ${x.id==v?'selected':''}>${esc(x.nama)}</option>`).join('');
+const perw=()=>db.users.filter(x=>x.role=='perawat');
+const RLD={admin:'Admin',katim:'KA Tim (Supervisor)',karu:'Kepala Ruangan',perawat:'Perawat Pelaksana'},RL=r=>(db&&db.set&&db.set.rl&&db.set.rl[r])||RLD[r]||r;
+const SUB={katim:['perawat'],karu:['katim'],admin:['perawat','katim']},tg2=m=>db.users.filter(u=>(SUB[m.role]||[]).includes(u.role)),vis=(m,x)=>m.role=='admin'||x.pid==m.id||(SUB[m.role]||[]).includes(U(x.pid).role);
+function go(v){S.v=v;render();if(v!='sheet')pull()}
+function lu(){$('#lu').innerHTML=opt(db.users.filter(x=>x.role==$('#lr').value))}
+function login(){const u=db.users.find(x=>x.id==$('#lu').value);if(u&&u.pin==$('#lp').value){S.u=u.id;S.v='dash';render()}else $('#le').textContent='PIN salah'}
+function render(){const a=$('#app');if(!S.u){a.innerHTML=`<div class=login><div class=hero><img src="${db.set.logo||LOGO}" alt=""><h1>Supervisi SOP</h1><div class=s1>Instalasi Hemodialisa</div><div class=s2>${esc(db.set.rs)} · Provinsi Jawa Barat</div></div><div class=card><h3 style="text-align:center">Masuk ke aplikasi</h3><div class=row><select id=lr onchange=lu() style="width:100%">${['katim','karu','perawat','admin'].map(r=>`<option value=${r}>${esc(RL(r))}</option>`).join('')}</select><select id=lu style="width:100%"></select><input id=lp type=password placeholder="PIN" style="width:100%"><button style="width:100%" onclick=login()>Masuk</button><div id=le style="color:var(--rd)"></div></div><div class=mu>PIN awal semua akun: 1234 (ubah di menu Pengguna). Data tersimpan di Google Drive.</div></div><div class=credit><div>Digagas &amp; dikembangkan dengan dedikasi oleh</div><b>Epi Abdul Wahid_HD</b><div>© 2026 · Untuk peningkatan mutu pelayanan hemodialisa</div></div></div>`;lu();return}
+const m=me(),nv={perawat:[['dash','Dasbor'],['req','Ajukan'],['rekap','Riwayat']],katim:[['dash','Dasbor'],['req','Permintaan'],['rekap','Rekap']],karu:[['dash','Dasbor'],['req','Permintaan'],['rekap','Rekap']],admin:[['dash','Dasbor'],['req','Permintaan'],['rekap','Rekap'],['users','Pengguna'],['sops','SOP'],['set','Pengaturan'],['bk','Cadangan']]}[m.role];
+const V={dash,req,rekap,users,sops,set:setv,bk,sheet}[S.v]();
+a.innerHTML=(S.v=='sheet'?'':`<div class=noprint><div class=top><img src="${db.set.logo||LOGO}" alt=""><div><b>Supervisi SOP</b><div class=mu>Instalasi Hemodialisa · ${esc(db.set.rs)}</div></div></div><div class=row><b>${esc(m.nama)}</b><span class=mu>(${esc(RL(m.role))})</span><button class=o style="margin-left:auto" onclick="S.u=null;render()">Keluar</button></div><nav>${nv.map(n=>`<button class="${S.v==n[0]?'':'o'}" onclick="go('${n[0]}')">${n[1]}</button>`).join('')}</nav></div>`)+V;if(S.v=='sheet'||S.v=='set')initPads()}
+const padEd=(t,k)=>t=='set'?1:(k=='ttdP'?(!S.ro||S.cur.pid==S.u):!S.ro);
+const pad=(k,t='cur')=>`<canvas class=pad data-t=${t} data-k=${k} width=300 height=90></canvas>${padEd(t,k)?`<button class="o noprint" style="padding:2px 8px;font-size:12px" onclick="clr('${t}','${k}')">Hapus ttd</button>`:''}`;
+const sg=(u,c)=>u?`<img src="${u}" style="height:60px;display:block;margin:0 auto">`:'<div style="height:60px"></div>';
+function clr(t,k){(t=='set'?db.set:S.cur)[k]='';save();render()}
+function initPads(){document.querySelectorAll('canvas[data-k]').forEach(c=>{const t=c.dataset.t,k=c.dataset.k,o=t=='set'?db.set:S.cur,x=c.getContext('2d');x.lineWidth=2;x.lineCap='round';x.strokeStyle='#000';
+if(o[k]){const im=new Image();im.onload=()=>{const s=Math.min(c.width/im.width,c.height/im.height),w=im.width*s,h=im.height*s;x.drawImage(im,(c.width-w)/2,(c.height-h)/2,w,h)};im.src=o[k]}
+if(!padEd(t,k))return;let d=0;const p=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height]};
+c.onpointerdown=e=>{d=1;c.setPointerCapture(e.pointerId);const[a,b]=p(e);x.beginPath();x.moveTo(a,b);e.preventDefault()};
+c.onpointermove=e=>{if(!d)return;const[a,b]=p(e);x.lineTo(a,b);x.stroke()};
+c.onpointerup=()=>{if(!d)return;d=0;o[k]=c.toDataURL('image/png');save()}})}
+function upl(i,k,w,h){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const c=document.createElement('canvas'),s=Math.min(w/im.width,h/im.height,1);c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);db.set[k]=c.toDataURL('image/png');save();render()};im.src=r.result};r.readAsDataURL(f)}
+function prn(){try{const sh=$('#sheet').cloneNode(true),a=[...document.querySelectorAll('#sheet input,#sheet select,#sheet textarea')],b=sh.querySelectorAll('input,select,textarea');
+a.forEach((e,i)=>{const d=b[i];if(e.tagName=='INPUT'){if(e.type=='radio'||e.type=='checkbox'){e.checked?d.setAttribute('checked',''):d.removeAttribute('checked')}else d.setAttribute('value',e.value)}else if(e.tagName=='TEXTAREA')d.textContent=e.value;else[...d.options].forEach((o,j)=>{e.options[j].selected?o.setAttribute('selected',''):o.removeAttribute('selected')})});
+const c=document.querySelectorAll('#sheet canvas'),k=sh.querySelectorAll('canvas');c.forEach((e,i)=>{const m=document.createElement('img');m.src=e.toDataURL('image/png');m.style.cssText='display:block;margin:0 auto;width:300px;max-width:100%;height:90px;object-fit:contain';k[i].replaceWith(m)});
+const css=[...document.querySelectorAll('style')].map(s=>s.textContent).join('\n'),f=document.createElement('iframe');f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';document.body.appendChild(f);
+const d=f.contentWindow.document;d.open();d.write('<!doctype html><html lang=id><head><meta charset=utf-8><title>Supervisi SOP</title><style>'+css+'</style></head><body style="background:#fff"><div class=w>'+sh.outerHTML+'</div></body></html>');d.close();
+setTimeout(()=>{f.contentWindow.focus();f.contentWindow.print();setTimeout(()=>f.remove(),3000)},500)}catch(e){window.print()}}
+function dash(){const m=me(),own=m.role=='perawat',mo=today().slice(0,7),rq=db.req.filter(x=>vis(m,x)),sp=db.sup.filter(x=>vis(m,x)),mn=sp.filter(x=>x.tgl.slice(0,7)==mo),av=mn.length?Math.round(mn.reduce((a,x)=>a+nil(x),0)/mn.length*10)/10:'–';
+const c=(n,l,k)=>`<div class=card><b style="font-size:26px;${k||''}">${n}</b><div class=mu>${l}</div></div>`,wt=rq.filter(x=>x.st!='Selesai');
+return`<div class=g>${c(rq.filter(x=>x.st=='Menunggu').length,'Menunggu','color:#b45309')}${c(rq.filter(x=>x.st=='Terjadwal').length,'Terjadwal','color:#2563eb')}${c(mn.length,'Selesai bulan ini')}${c(av+(av=='–'?'':'%'),'Rata-rata nilai',av=='–'?'':'color:'+col(av))}</div>
+<div class=card><h3>Permintaan supervisi aktif</h3>${wt.length?wt.slice(0,8).map(r=>`<div class=row><b>${esc(U(r.pid).nama)}</b> — ${esc(SP(r.sopId).nama)} <span class=mu>${fmt(r.jad||r.tgl)}</span>${bdg(r.st,stc[r.st])}${r.pid==m.id?'':`<button onclick="newSup('${r.pid}','${r.sopId}','${r.id}')">Mulai</button>`}</div>`).join(''):'<div class=mu>Tidak ada permintaan aktif.</div>'}</div>
+<div class=card><h3>Status SOP bulan ini</h3>${db.sops.map(s=>{const n=mn.filter(x=>x.sopId==s.id).length;return`<div class=row>${n?bdg('✓ '+n,'var(--gn)'):bdg('belum','#6b7280')} ${esc(s.nama)}</div>`}).join('')}</div>`}
+function req(){const m=me(),own=m.role=='perawat'||m.role=='katim',tgt=tg2(m),to=RL(m.role=='katim'?'karu':'katim');let h=S.wa&&own?waCard():'';
+if(own)h+=`<div class=card><h3>Ajukan supervisi (ke ${esc(to)})</h3><div class=row><select id=rs>${opt(db.sops)}</select><input type=date id=rt value="${today()}"><input id=rc placeholder="Catatan (opsional)"><button onclick=addReq()>Ajukan</button></div></div>`;
+if(tgt.length)h+=`<div class=card><h3>Supervisi langsung</h3><div class=row><select id=dp>${opt(tgt)}</select><select id=ds>${opt(db.sops)}</select><button onclick="newSup($('#dp').value,$('#ds').value)">Mulai</button></div></div>`;
+const L=db.req.filter(x=>vis(m,x));
+return h+`<div class=card><h3>Daftar permintaan</h3><div class=tw><table class=tb>${L.map(r=>`<tr><td><b>${esc(U(r.pid).nama)}</b><div class=mu>${esc(SP(r.sopId).nama)}${r.cat?' · '+esc(r.cat):''}</div></td><td>${bdg(r.st,stc[r.st])}</td><td>${r.pid==m.id?fmt(r.jad||r.tgl):`<input type=date id="j${r.id}" value="${r.jad||r.tgl}">`}</td><td>${r.pid==m.id?(r.st=='Menunggu'?`<button class=d onclick="delReq('${r.id}')">Batal</button>`:''):`<button class=o onclick="sched('${r.id}')">Jadwalkan</button> <button onclick="newSup('${r.pid}','${r.sopId}','${r.id}')">Supervisi</button> <button class=d onclick="delReq('${r.id}')">Hapus</button>`}</td></tr>`).join('')||'<tr><td class=mu>Belum ada permintaan.</td></tr>'}</table></div></div>`}
+function addReq(){const r={id:uid(),pid:S.u,sopId:$('#rs').value,tgl:$('#rt').value||today(),cat:$('#rc').value,st:'Menunggu',at:new Date().toLocaleString('id-ID',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'})};db.req.push(r);save();toast('Permintaan terkirim');
+const msg=`*Pengajuan Supervisi SOP*\nNama: ${U(r.pid).nama}\nSOP: ${SP(r.sopId).nama}\nUsulan tanggal: ${fmt(r.tgl)}\nDiajukan: ${r.at}${r.cat?'\nCatatan: '+r.cat:''}`,kt=db.users.filter(u=>u.role==(me().role=='katim'?'karu':'katim')),em=me().role=='perawat'&&kt.some(u=>u.em);
+try{if(window.google&&google.script&&em)google.script.run.notifyKatim('Pengajuan Supervisi SOP - '+U(r.pid).nama,msg)}catch(e){}
+S.wa={msg,em,list:kt.filter(u=>u.wa)};render()}
+const waCard=()=>{const w=S.wa;return`<div class=card style="border-color:var(--gn)"><h3>✓ Permintaan terkirim</h3><div class=mu>${w.em?'Email otomatis dikirim ke KA Tim. ':''}Kirim juga lewat WhatsApp:</div><div class=row>${w.list.map(u=>`<a class=b style="text-decoration:none;background:#16a34a" target=_blank rel=noopener href="https://wa.me/${String(u.wa).replace(/\D/g,'').replace(/^0/,'62')}?text=${encodeURIComponent(w.msg)}">WA ${esc(u.nama)}</a>`).join('')||'<span class=mu>Nomor WA penerima belum diisi admin.</span>'}<button class=o onclick="S.wa=null;render()">Tutup</button></div></div>`}
+function sched(id){const r=db.req.find(x=>x.id==id);r.jad=$('#j'+id).value;r.st=r.st=='Selesai'?r.st:'Terjadwal';save();render()}
+function delReq(id){db.req=db.req.filter(x=>x.id!=id);save();render()}
+function newSup(pid,sid,rid){const st=db.set,m=me();S.cur={id:uid(),reqId:rid,nomor:'',tuk:'Tempat Kerja',asesor:m.nama,asn:m.nip||'',pid,tgl:today(),durasi:SP(sid).dur||'15 Menit',sopId:sid,items:JSON.parse(JSON.stringify(SP(sid).items)),ans:{},kb:{},tl:'',kr:st.kr,krn:st.krn,ki:st.ki,kin:st.kin,draft:1};S.ro=false;S.v='sheet';render()}
+function openSup(id){S.cur=db.sup.find(x=>x.id==id);S.ro=S.cur.pid==S.u;S.v='sheet';render()}
+const fld=(k,v)=>{S.cur[k]=v},ans=(i,v)=>{S.cur.ans[i]=v;upd()},kb=(i,v)=>{S.cur.kb[i]=v};
+function chSop(v){S.cur.sopId=v;S.cur.durasi=SP(v).dur||S.cur.durasi;S.cur.items=JSON.parse(JSON.stringify(SP(v).items));S.cur.ans={};S.cur.kb={};render()}
+function upd(){const n=nil(S.cur),e=$('#nl');e.textContent=n+'%';e.style.background=col(n);$('#rk').textContent=n>=db.set.target?'KOMPETEN':'TIDAK KOMPETEN'}
+function saveSup(){const s=S.cur;delete s.draft;if(!db.sup.find(x=>x.id==s.id))db.sup.push(s);if(s.reqId){const r=db.req.find(x=>x.id==s.reqId);if(r)r.st='Selesai'}save();toast('Supervisi tersimpan')}
+function sheet(){const s=S.cur,ro=S.ro?'disabled':'',st=db.set,sop=SP(s.sopId),n=nil(s),cnt={},seen={},kk=[];(()=>{let r=0;s.items.forEach((x,i)=>{if(i&&x.g!=s.items[i-1].g)r++;kk[i]=x.g+'#'+r;cnt[kk[i]]=(cnt[kk[i]]||0)+1})})();let gn=0,rows='';
+s.items.forEach((x,i)=>{const q=kk[i],f=seen[q]===undefined;if(f){seen[q]=0;gn++}const dsh=x.t[0]=='-',L=dsh?'-':String.fromCharCode(97+seen[q]++)+'.',tx=dsh?x.t.replace(/^-\s*/,''):x.t,rd=(nm,v,ch,fn)=>`<td class=c><input type=radio name="${nm}${i}" ${ch?'checked':''} ${ro} onclick="${fn}(${i},'${v}')"></td>`;
+rows+=`<tr>${f?`<td class=c rowspan=${cnt[q]}>${gn}</td><td rowspan=${cnt[q]}>${esc(x.g)}</td>`:''}<td><div class=li><span>${L}</span><span>${esc(tx)}</span></div></td>${rd('y','y',s.ans[i]=='y','ans')}${rd('y','t',s.ans[i]=='t','ans')}${rd('k','K',s.kb[i]=='K','kb')}${rd('k','B',s.kb[i]=='B','kb')}</tr>`});
+const I=(k,ph)=>`<input value="${esc(s[k])}" ${ro} placeholder="${ph||''}" oninput="fld('${k}',this.value)">`;
+return`<div class=noprint><div class=row><button class=o onclick="go('dash')">← Kembali</button>${S.ro?'':'<button onclick=saveSup()>Simpan</button>'}<button onclick="prn()">Cetak / Simpan PDF</button></div><div class=mu>Jika tombol cetak tidak merespons, gunakan menu cetak browser lalu pilih "Simpan sebagai PDF".</div></div>
+<div class=sheet id=sheet><div class=kop style="display:flex;align-items:center;gap:12px"><img src="${st.logo||LOGO}" style="height:68px;width:68px;object-fit:contain"><div style="flex:1"><b>${esc(st.k1)}</b><br><b>${esc(st.k2)}</b><br><b>${esc(st.k3)}</b></div><div style="width:68px"></div></div>
+<table><tr><td style="width:30%">Skema Sertifikasi/Klaster Assesmen</td><td colspan=2><b>${esc(st.judul)}</b></td></tr><tr><td>Nomor</td><td colspan=2>${I('nomor','HD ..... / ..... / ..... / 2026')}</td></tr>
+<tr><td>TUK</td><td colspan=2><select ${ro} onchange="fld('tuk',this.value)">${['Sewaktu','Tempat Kerja','Mandiri'].map(x=>`<option ${x==s.tuk?'selected':''}>${x}</option>`).join('')}</select></td></tr>
+<tr><td>Nama Asesor / PP / Ka. Tim</td><td colspan=2><b>${I('asesor')}</b></td></tr>
+<tr><td>Nama Perawat</td><td colspan=2><select ${ro} onchange="fld('pid',this.value)">${opt(db.users.filter(u=>u.role=='perawat'||u.role=='katim'),s.pid)}</select></td></tr>
+<tr><td>Tanggal</td><td colspan=2><input type=date value="${s.tgl}" ${ro} onchange="fld('tgl',this.value)"></td></tr><tr><td>Durasi</td><td colspan=2>${I('durasi')}</td></tr>
+<tr><td>Unit Kompetensi No.${db.sops.findIndex(x=>x.id==s.sopId)+1}</td><td colspan=2><b><select ${ro} onchange="chSop(this.value)">${opt(db.sops,s.sopId)}</select></b></td></tr></table>
+${s.items.length?`<table><tr><th rowspan=2 style="width:30px">No.</th><th rowspan=2>Langkah Kerja</th><th rowspan=2>Poin yang Diobservasi</th><th colspan=2>Pencapaian</th><th colspan=2>Penilaian</th></tr><tr><th>Ya</th><th>Tidak</th><th>K</th><th>BK</th></tr>${rows}</table>`:'<div class=noprint style="color:#b45309">Daftar poin untuk SOP ini belum diisi. Admin dapat mengisinya di menu SOP.</div>'}
+<table style="border:0"><tr><td style="border:0;width:30%"><b>Nilai</b> = Jumlah Ya ÷ Jumlah Poin yang dicentang (Ya + Tidak) × 100%</td><td style="border:0"><span id=nl style="background:${col(n)};color:#fff;padding:4px 14px;font-weight:700;font-size:16px">${n}%</span> <span class=noprint>(target ≥ ${st.target}%)</span></td></tr></table>
+<table><tr><th colspan=2>Rekomendasi</th><th>Perawat & Asesor</th></tr><tr><td colspan=2>Berdasarkan bukti yang terkumpul dan disandingkan dengan satandar, maka diputuskan: <b id=rk>${n>=st.target?'KOMPETEN':'TIDAK KOMPETEN'}</b></td><td rowspan=2 style="width:36%;vertical-align:top;text-align:center"><b>Perawat</b><br>Nama: <b>${esc(U(s.pid).nama)}</b><br>Tanda tangan / Tanggal:<br>${pad('ttdP')}${fmt(s.tgl)}<hr style="border:0;border-top:1px solid #000"><b>Asesor/Perawat Primer/Ka. Tim</b><br>Nama: <b>${esc(s.asesor)}</b><br>NIP: ${I('asn','NIP')}Tanda tangan / Tanggal:<br>${pad('ttdA')}${fmt(s.tgl)}</td></tr><tr><td colspan=2 style="height:90px;vertical-align:top"><b>Catatan / Tindak lanjut / Pembinaan:</b><textarea ${ro} rows=3 oninput="fld('tl',this.value)">${esc(s.tl)}</textarea></td></tr></table>
+<table style="border:0"><tr><td style="border:0;width:50%;text-align:center">Mengetahui,<br>Ka. Instalasi ${esc(st.inst)}<br>${sg(st.ttdKi)}<b>${esc(st.ki)}</b><br>NIP. ${esc(st.kin)}</td><td style="border:0;text-align:center">Kepala Ruangan<br>${sg(st.ttdKr,'margin-left:auto')}<b>${esc(st.kr)}</b><br>NIP. ${esc(st.krn)}</td></tr></table></div>`}
+function rekap(){const m=me(),own=m.role=='perawat';let L=db.sup.filter(x=>vis(m,x)&&(!S.fm||x.tgl.slice(0,7)==S.fm)&&(!S.fs||x.sopId==S.fs)&&(!S.fp||x.pid==S.fp)).sort((a,b)=>b.tgl.localeCompare(a.tgl));const av=L.length?Math.round(L.reduce((a,x)=>a+nil(x),0)/L.length*10)/10:'–';
+return`<div class=card><div class=row><input type=month value="${S.fm}" onchange="S.fm=this.value;render()"><select onchange="S.fs=this.value;render()"><option value="">Semua SOP</option>${opt(db.sops,S.fs)}</select>${own?'':`<select onchange="S.fp=this.value;render()"><option value="">Semua yang disupervisi</option>${opt(db.users.filter(u=>u.role=='perawat'||u.role=='katim'),S.fp)}</select>`}</div><div class=mu>${L.length} supervisi · rata-rata ${av}${av=='–'?'':'%'}</div></div><div class=card><div class=tw><table class=tb>${L.map(x=>{const n=nil(x);return`<tr><td>${x.tgl}</td><td><b>${esc(U(x.pid).nama)}</b><div class=mu>${esc(SP(x.sopId).nama)}</div></td><td>${bdg(n+'%',col(n))}</td><td><button class=o onclick="openSup('${x.id}')">Buka</button></td></tr>`}).join('')||'<tr><td class=mu>Tidak ada data.</td></tr>'}</table></div></div>`}
+function users(){return`<div class=card><h3>Pengguna</h3>${db.users.map(u=>`<div class=row><input value="${esc(u.nama)}" onchange="uu('${u.id}','nama',this.value)"><select onchange="uu('${u.id}','role',this.value)">${['perawat','katim','karu','admin'].map(r=>`<option value=${r} ${r==u.role?'selected':''}>${esc(RL(r))}</option>`).join('')}</select><input placeholder="NIP" value="${esc(u.nip||'')}" style="width:150px" onchange="uu('${u.id}','nip',this.value)"><input placeholder="No. WA (62812...)" value="${esc(u.wa||'')}" style="width:150px" onchange="uu('${u.id}','wa',this.value)"><input placeholder="Email" value="${esc(u.em||'')}" style="width:190px" onchange="uu('${u.id}','em',this.value)"><input value="${esc(u.pin)}" style="width:80px" onchange="uu('${u.id}','pin',this.value)"><button class=d onclick="du('${u.id}')">Hapus</button></div>`).join('')}<button onclick="db.users.push({id:uid(),nama:'Perawat baru',role:'perawat',pin:'1234'});save();render()">+ Tambah</button></div><div class=card><h3>Tambah banyak sekaligus</h3><div class=mu>Tempel daftar nama, satu orang per baris (bisa salin dari Excel/Word). Opsional: Nama, NIP, No. WA dipisah tab atau tanda |. PIN awal 1234.</div><div class=row><select id=br>${['perawat','katim','karu'].map(r=>`<option value=${r}>${esc(RL(r))}</option>`).join('')}</select></div><textarea id=bt placeholder="Alimudin, AMK&#10;Nama lain | NIP | 62812..."></textarea><button onclick=bulkU()>Tambah semua</button></div>`}
+function bulkU(){const r=$('#br').value;let n=0;$('#bt').value.split('\n').map(x=>x.trim()).filter(Boolean).forEach(l=>{const p=l.split(/\t|\|/).map(x=>x.trim());if(!p[0]||db.users.some(u=>u.nama==p[0]&&u.role==r))return;db.users.push({id:uid(),nama:p[0],role:r,pin:'1234',nip:p[1]||'',wa:p[2]||''});n++});save();render();toast(n+' pengguna ditambahkan')}
+function uu(i,k,v){db.users.find(x=>x.id==i)[k]=v;save()}function du(i){if(i==S.u){toast('Tidak bisa menghapus akun sendiri');return}db.users=db.users.filter(x=>x.id!=i);save();render()}
+function sops(){const card=s=>`<div class=card><div class=row><input value="${esc(s.nama)}" style="flex:1;min-width:160px" onchange="us('${s.id}',this.value)"><input value="${esc(s.dur||'')}" style="width:90px" placeholder="Durasi" onchange="sd('${s.id}',this.value)"></div><div class=row><button class=o onclick="msp('${s.id}',-1)">▲</button><button class=o onclick="msp('${s.id}',1)">▼</button><button onclick="tg('${s.id}')">${S.ed==s.id?'Tutup tabel':'Edit poin ('+s.items.length+')'}</button><button class=d style="margin-left:auto" onclick="ds('${s.id}')">Hapus SOP</button></div>${S.ed==s.id?edTbl(s):''}</div>`;
+return`<div class=card><h3>Daftar SOP & poin observasi</h3><div class=mu>Ketuk "Edit poin" pada SOP untuk mengubah tabel ceklisnya: ubah teks langsung di tabel, tambah / hapus poin, tambah langkah kerja baru, atau geser urutan dengan tombol ▲▼. Perubahan tersimpan otomatis.</div></div>${db.sops.map(card).join('')}<button onclick="const id=uid();db.sops.push({id,nama:'SOP baru',dur:'15 Menit',items:prs(TPL)});S.ed=id;save();render()">+ Tambah SOP</button>`}
+const SO=id=>db.sops.find(x=>x.id==id),tg=id=>{S.ed=S.ed==id?null:id;render()};
+function edTbl(s){const it=s.items,B='style="padding:2px 8px"';let rows='',gi=0,i=0;
+while(i<it.length){let j=i;while(j<it.length&&it[j].g==it[i].g)j++;gi++;
+for(let k=i;k<j;k++)rows+=`<tr>${k==i?`<td class=c rowspan=${j-i}>${gi}</td><td rowspan=${j-i} style="min-width:150px"><input value="${esc(it[i].g)}" style="width:100%" onchange="eg('${s.id}',${i},${j},this.value)"><div class=row><button class=o ${B} onclick="mg('${s.id}',${i},${j},-1)">▲</button><button class=o ${B} onclick="mg('${s.id}',${i},${j},1)">▼</button><button class=o ${B} onclick="ai('${s.id}',${j})">+ Poin</button><button class=d ${B} onclick="dg('${s.id}',${i},${j})">✕</button></div></td>`:''}<td><textarea style="min-height:40px;min-width:190px" onchange="et('${s.id}',${k},this.value)">${esc(it[k].t)}</textarea></td><td style="white-space:nowrap"><button class=o ${B} onclick="mv('${s.id}',${k},-1)">▲</button> <button class=o ${B} onclick="mv('${s.id}',${k},1)">▼</button> <button class=d ${B} onclick="di('${s.id}',${k})">✕</button></td></tr>`;
+i=j}
+return`<div class=mu style="margin:8px 0">Awali poin dengan tanda - untuk sub-poin. Huruf a, b, c di lembar dibuat otomatis.</div><div class=tw><table class=tb><tr><th>No.</th><th>Langkah Kerja</th><th>Poin yang Diobservasi</th><th>Aksi</th></tr>${rows||'<tr><td colspan=4 class=mu>Belum ada poin. Tambahkan langkah kerja di bawah.</td></tr>'}</table></div><div class=row><button onclick="ag('${s.id}')">+ Langkah kerja baru</button></div><details><summary class=mu>Tempel banyak poin sekaligus (format: Langkah|Poin)</summary><textarea onchange="ui('${s.id}',this.value)" placeholder="Persiapan Alat|Timbangan Berat Badan">${esc(it.map(x=>x.g+'|'+x.t).join('\n'))}</textarea><div class=mu>Menempel di sini akan mengganti seluruh poin SOP ini.</div></details>`}
+function eg(id,i,j,v){const it=SO(id).items;for(let k=i;k<j;k++)it[k].g=v.trim();save()}
+function et(id,k,v){SO(id).items[k].t=v.trim();save()}
+function ai(id,p){const it=SO(id).items;it.splice(p,0,{g:it[p-1].g,t:'Poin baru'});save();render()}
+function ag(id){SO(id).items.push({g:'Langkah baru',t:'Poin baru'});save();render()}
+function di(id,k){if(!confirm('Hapus poin ini?'))return;SO(id).items.splice(k,1);save();render()}
+function dg(id,i,j){if(!confirm('Hapus seluruh langkah kerja ini beserta poinnya?'))return;SO(id).items.splice(i,j-i);save();render()}
+function mv(id,k,d){const it=SO(id).items,n=k+d;if(n<0||n>=it.length)return;const a=it[k].t;it[k].t=it[n].t;it[n].t=a;save();render()}
+function mg(id,i,j,d){const it=SO(id).items;if(d<0){if(!i)return;let p=i-1;while(p>0&&it[p-1].g==it[i-1].g)p--;const b=it.splice(i,j-i);it.splice(p,0,...b)}else{if(j>=it.length)return;let e=j+1;while(e<it.length&&it[e].g==it[j].g)e++;const b=it.splice(j,e-j);it.splice(i,0,...b)}save();render()}
+function msp(id,d){const a=db.sops,k=a.findIndex(x=>x.id==id),n=k+d;if(n<0||n>=a.length)return;[a[k],a[n]]=[a[n],a[k]];save();render()}
+function sd(i,v){db.sops.find(x=>x.id==i).dur=v;save()}function us(i,v){db.sops.find(x=>x.id==i).nama=v;save()}function ui(i,v){db.sops.find(x=>x.id==i).items=prs(v);save();toast('Poin tersimpan');render()}function ds(i){if(!confirm('Hapus SOP ini beserta semua poinnya?'))return;db.sops=db.sops.filter(x=>x.id!=i);if(S.ed==i)S.ed=null;save();render()}
+function setv(){const f=(k,l)=>`<div class=row><span style="width:150px">${l}</span><input style="flex:1" value="${esc(db.set[k])}" onchange="db.set['${k}']=this.type=='number'?+this.value:this.value;save()" ${k=='target'?'type=number':''}></div>`;
+return`<div class=card><h3>Kop & pengaturan</h3>${f('k1','Kop baris 1')}${f('k2','Kop baris 2')}${f('k3','Kop baris 3')}${f('rs','Nama rumah sakit')}${f('inst','Instalasi')}${f('judul','Judul skema')}${f('target','Target kompeten (%)')}<div class=mu>Nama, NIP, dan tanda tangan di bawah ini langsung berlaku untuk semua daftar tilik.</div>${f('ki','Ka. Instalasi')}${f('kin','NIP Ka. Instalasi')}<div class=mu>Tanda tangan Ka. Instalasi (gambar di kotak, atau unggah gambar):</div>${pad('ttdKi','set')}<input type=file accept="image/*" onchange="upl(this,'ttdKi',300,90)">${f('kr','Kepala Ruangan')}${f('krn','NIP Kepala Ruangan')}<div class=mu>Tanda tangan Kepala Ruangan:</div>${pad('ttdKr','set')}<input type=file accept="image/*" onchange="upl(this,'ttdKr',300,90)"></div><div class=card><h3>Label peran</h3><div class=mu>Nama jabatan yang tampil di aplikasi. Alur: KA Tim/PP menyupervisi Perawat Pelaksana, sedangkan KA Tim/PP disupervisi oleh Kepala Ruangan.</div>${['perawat','katim','karu','admin'].map(r=>`<div class=row><span style="width:150px">${r}</span><input style="flex:1" value="${esc(RL(r))}" onchange="(db.set.rl=db.set.rl||{})['${r}']=this.value;save()"></div>`).join('')}</div><div class=card><h3>Logo kop</h3><img src="${db.set.logo||LOGO}" style="height:70px;display:block"><input type=file accept="image/*" onchange="upl(this,'logo',260,260)"></div>`}
+function bk(){return`<div class=card><h3>Cadangan data</h3><div class=mu>Salin teks ini dan simpan (mis. di Google Drive). Untuk memulihkan, tempel di kotak bawah.</div><textarea readonly onclick=this.select()>${esc(JSON.stringify(db))}</textarea><h3>Pulihkan</h3><textarea id=imp></textarea><button onclick="try{db=JSON.parse($('#imp').value);save();toast('Data dipulihkan');S.u=null;render()}catch(e){toast('Format tidak valid')}">Pulihkan</button></div>`}
+$('#app').innerHTML='<div class=card style="max-width:340px;margin:60px auto;text-align:center">Memuat data dari Google Drive…</div>';google.script.run.withSuccessHandler(boot).withFailureHandler(e=>{$('#app').innerHTML='<div class=card>Gagal memuat data: '+esc(e&&e.message)+'</div>'}).loadData();
+</script><script>
+if('serviceWorker' in navigator && /^https?:$/.test(location.protocol)){
+  window.addEventListener('load',function(){try{navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}});
+}
+</script></body></html>
